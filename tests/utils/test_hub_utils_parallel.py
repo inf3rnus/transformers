@@ -16,6 +16,7 @@ import os
 import shutil
 import unittest
 
+import huggingface_hub
 from huggingface_hub import hf_hub_download
 
 import transformers
@@ -43,17 +44,18 @@ class GetFromCacheTestsParallel(unittest.TestCase):
         # Mock to always make it return False
         transformers.utils.hub.checkpoint_exists = lambda *args, **kwargs: False
 
+        huggingface_hub.constants.HF_HUB_ENABLE_HF_TRANSFER = True
         os.environ["HF_ENABLE_PARALLEL_DOWNLOADING"] = "true"
         os.environ["HF_PARALLEL_DOWNLOADING_WORKERS"] = "8"
-        os.environ["HF_HUB_ENABLE_HF_TRANSFER"] = "1"
 
     def tearDown(self) -> None:
         # Restore the original function after the test
         transformers.utils.hub.checkpoint_exists = self._original_checkpoint_exists
 
+        huggingface_hub.constants.HF_HUB_ENABLE_HF_TRANSFER = False
+
         del os.environ["HF_ENABLE_PARALLEL_DOWNLOADING"]
         del os.environ["HF_PARALLEL_DOWNLOADING_WORKERS"]
-        del os.environ["HF_HUB_ENABLE_HF_TRANSFER"]
 
     def test_get_checkpoint_shard_files(self):
         hf_hub_download(

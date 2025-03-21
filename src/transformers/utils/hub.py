@@ -1114,42 +1114,57 @@ def get_checkpoint_shard_files(
         shard_filenames = [os.path.join(pretrained_model_name_or_path, subfolder, f) for f in shard_filenames]
         return shard_filenames, sharded_metadata
 
-    args_list = [
-        (
-            pretrained_model_name_or_path,
-            shard_filename,
-            cache_dir,
-            force_download,
-            proxies,
-            resume_download,
-            local_files_only,
-            token,
-            user_agent,
-            revision,
-            subfolder,
-            _commit_hash,
-        )
-        for shard_filename in shard_filenames
-    ]
+    # args_list = [
+    #     (
+    #         pretrained_model_name_or_path,
+    #         shard_filename,
+    #         cache_dir,
+    #         force_download,
+    #         proxies,
+    #         resume_download,
+    #         local_files_only,
+    #         token,
+    #         user_agent,
+    #         revision,
+    #         subfolder,
+    #         _commit_hash,
+    #     )
+    #     for shard_filename in shard_filenames
+    # ]
 
-    cached_filenames = []
+    # cached_filenames = []
 
-    if json.loads(os.environ.get("HF_ENABLE_PARALLEL_DOWNLOADING", "false")):
-        num_workers = json.loads(os.environ.get("HF_PARALLEL_DOWNLOADING_WORKERS", "8"))
+    # if json.loads(os.environ.get("HF_ENABLE_PARALLEL_DOWNLOADING", "false")):
+    #     num_workers = json.loads(os.environ.get("HF_PARALLEL_DOWNLOADING_WORKERS", "8"))
 
-        # make sure you don't have excessive workers
-        num_workers = min(len(args_list), num_workers)
+    #     # make sure you don't have excessive workers
+    #     num_workers = min(len(args_list), num_workers)
 
-        print(f"Downloading model weights in parallel with {num_workers} workers...")
+    #     print(f"Downloading model weights in parallel with {num_workers} workers...")
 
-        cached_filenames += download_shards_with_threads(num_workers, args_list)
+    #     cached_filenames += download_shards_with_threads(num_workers, args_list)
 
-        # reorder after the out of order execution that threads will produce
-        cached_filenames.sort()
-    else:
-        for args in args_list:
-            cached_filename = download_shard(args)
-            cached_filenames.append(cached_filename)
+    #     # reorder after the out of order execution that threads will produce
+    #     cached_filenames.sort()
+    # else:
+    #     for args in args_list:
+    #         cached_filename = download_shard(args)
+    #         cached_filenames.append(cached_filename)
+
+    cached_filenames = cached_files(
+        pretrained_model_name_or_path,
+        shard_filenames,
+        cache_dir=cache_dir,
+        force_download=force_download,
+        proxies=proxies,
+        resume_download=resume_download,
+        local_files_only=local_files_only,
+        token=token,
+        user_agent=user_agent,
+        revision=revision,
+        subfolder=subfolder,
+        _commit_hash=_commit_hash,
+    )
 
     return cached_filenames, sharded_metadata
 
