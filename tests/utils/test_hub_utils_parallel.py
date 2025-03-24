@@ -34,7 +34,7 @@ class GetFromCacheTestsParallel(unittest.TestCase):
         # if os.path.exists(CACHE_DIR):
         #     shutil.rmtree(CACHE_DIR)
 
-        os.environ["DISABLE_PARALLEL_LOADING"] = "true"
+        os.environ["DISABLE_PARALLEL_LOADING"] = "false"
         os.environ["PARALLEL_LOADING_WORKERS"] = "2"
         os.environ["HF_HUB_ENABLE_HF_TRANSFER"] = "1"
         multiprocessing.set_start_method("spawn", force=True)

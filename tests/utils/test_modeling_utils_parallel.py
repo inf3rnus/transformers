@@ -3,7 +3,7 @@ import os
 
 
 # Set the env variable to enable parallel loading
-os.environ["HF_HF_ENABLE_PARALLEL_LOADING"] = "true"
+os.environ["DISABLE_PARALLEL_LOADING"] = "false"
 
 # Set multiprocessing to spawn, which is required due to cuda constraints
 multiprocessing.set_start_method("spawn", force=True)
